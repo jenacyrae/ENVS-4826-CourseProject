@@ -31,4 +31,23 @@ wetlanddata <- rename(wetlanddata,"UID"="uid","agri_severity"="agr_severity_m3",
 
 wetlanddata <- wetlanddata[wetlanddata$visit_no != 2, ]
 
+# Testing linear model
+
+library(lme4)
+
+testmodel <- lm(wetlanddata$human_use_severity ~ wetlanddata$total_invasive_cover)
+
+summary(testmodel)
+
+par(mfrow=c(2,2))
+plot(testmodel)
+
+ggplot(wetlanddata, aes(x = total_invasive_cover, y = human_use_severity)) +
+  geom_point()+
+  geom_smooth(method = "lm")
+
+# Can conclude from the plots and summary that no significant relationship is present at this broad of a scale. 
+
+
+
 
