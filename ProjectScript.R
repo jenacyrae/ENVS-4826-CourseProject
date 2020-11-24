@@ -48,6 +48,12 @@ ggplot(wetlanddata, aes(x = total_invasive_cover, y = human_use_severity)) +
 
 # Can conclude from the plots and summary that no significant relationship is present at this broad of a scale. 
 
+# Exploration of subregion
+
+wetlanddata$region <- as.factor(wetlanddata$region)
+table(wetlanddata$region)
+
+
 
 
 
