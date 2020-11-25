@@ -64,5 +64,27 @@ ggplot(wetlanddata, aes(y = human_use_severity, x = total_invasive_cover, color 
   geom_line(aes(group = region)) +
   theme_classic()
 
+# Mapping invasive cover by region
+
+library(ggplot2)
+library(sf)
+library(stars)
+
+st_read(data=wetlanddata,
+                      options = c("X_POSSIBLE_NAMES=longitude", 
+                                  "Y_POSSIBLE_NAMES=latitude"),
+                      crs = 4326)
+
+library("rnaturalearth")
+library("rnaturalearthdata")
+library("rnaturalearth")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data=nwca_sites, mapping = aes(color = total_invasive_cover))) +
+  coord_sf(xlim = c(-132, -62), ylim = c(22, 53), expand = FALSE) +
+  ggtitle("United States 2011 Wetland Survey Sites") +
+  theme(plot.title = element_text(hjust = 0.5, size = 18))
+
 
 
