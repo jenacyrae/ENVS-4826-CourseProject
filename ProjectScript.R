@@ -98,11 +98,23 @@ ggplot(data = world) +
   ggtitle("United States 2011 Wetland Survey Sites") +
   theme(plot.title = element_text(hjust = 0.5, size = 18))
 
+# Recoding total invasive cover
+
+wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive_cover, 
+                         `ABSENT`="0",
+                         `<5%`="1",
+                         `5-25%`="2",
+                         `26-75%`="3",
+                         `>75%`="4"))
+
+
 # Grouping and averaging by region
 
-#group by region, summarize plant column
+str(wetlanddata)
+as.numeric(wetlanddata$total_invasive_cover)
 
-invasivecover_by_region <- group_by(wetlanddata, region, total_invasive_cover)
-region_averages <- summarize(invasivecover_by_region, 
-                              mean = n())
+invasivecover_by_region <- group_by(wetlanddata, region)
+region_averages <- summarize(invasivecover_by_region,
+                             avg_invasive= mean(total_invasive_cover, na.rm = TRUE)
 
+mutate(region_averages, "proportion" = count 
