@@ -107,12 +107,19 @@ wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive
                          `26-75%`="3",
                          `>75%`="4"))
 
+
 # Grouping and averaging by region
 
 wetlanddata$total_invasive_cover <- as.numeric(as.character(wetlanddata$total_invasive_cover))
 
-invasivecover_by_region <- group_by(wetlanddata, region)
-region_averages <- summarize(invasivecover_by_region,
-                             avg_invasive= mean(total_invasive_cover, na.rm = TRUE)
+by_region <- group_by(wetlanddata, region)
+cover_avg_by_region <- summarize(by_region,
+                             avg_invasive= mean(total_invasive_cover, na.rm = TRUE))
 
-mutate(region_averages, "proportion" = count 
+# Modelling the data
+
+library(glm2)
+
+regression <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=wetlanddata)
+
+summary(regression)
