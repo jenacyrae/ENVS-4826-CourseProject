@@ -70,7 +70,9 @@ library(ggplot2)
 library(sf)
 library(stars)
 
-st_read(data=wetlanddata,
+write.csv(wetlanddata, file = "data/wetlanddata.csv")
+
+wetlandmap <- st_read("data/wetlanddata.csv",
                       options = c("X_POSSIBLE_NAMES=longitude", 
                                   "Y_POSSIBLE_NAMES=latitude"),
                       crs = 4326)
@@ -79,12 +81,19 @@ library("rnaturalearth")
 library("rnaturalearthdata")
 library("rnaturalearth")
 world <- ne_countries(scale = "medium", returnclass = "sf")
+
 ggplot(data = world) +
   geom_sf() +
-  geom_sf(data=nwca_sites, mapping = aes(color = total_invasive_cover))) +
+  geom_sf(data=wetlandmap, mapping = aes(color = region)) +
   coord_sf(xlim = c(-132, -62), ylim = c(22, 53), expand = FALSE) +
   ggtitle("United States 2011 Wetland Survey Sites") +
   theme(plot.title = element_text(hjust = 0.5, size = 18))
 
+# Grouping and averaging by region
 
+#group by region, summarize plant column
+
+invasivecover_by_region <- group_by(wetlanddata, region, total_invasive_cover)
+region_averages <- summarize(invasivecover_by_region, 
+                              abundance = n())
 
