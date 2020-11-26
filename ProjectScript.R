@@ -107,11 +107,9 @@ wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive
                          `26-75%`="3",
                          `>75%`="4"))
 
-
 # Grouping and averaging by region
 
-str(wetlanddata)
-as.numeric(wetlanddata$total_invasive_cover)
+wetlanddata$total_invasive_cover <- as.numeric(as.character(wetlanddata$total_invasive_cover))
 
 invasivecover_by_region <- group_by(wetlanddata, region)
 region_averages <- summarize(invasivecover_by_region,
