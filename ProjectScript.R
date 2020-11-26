@@ -64,7 +64,7 @@ ggplot(wetlanddata, aes(y = human_use_severity, x = total_invasive_cover, color 
   geom_line(aes(group = region)) +
   theme_classic()
 
-# Mapping invasive cover by region
+# Mapping data points by region
 
 library(ggplot2)
 library(sf)
@@ -89,11 +89,20 @@ ggplot(data = world) +
   ggtitle("United States 2011 Wetland Survey Sites") +
   theme(plot.title = element_text(hjust = 0.5, size = 18))
 
+# Mapping data points by invasive cover 
+
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data=wetlandmap, mapping = aes(color = total_invasive_cover)) +
+  coord_sf(xlim = c(-132, -62), ylim = c(22, 53), expand = FALSE) +
+  ggtitle("United States 2011 Wetland Survey Sites") +
+  theme(plot.title = element_text(hjust = 0.5, size = 18))
+
 # Grouping and averaging by region
 
 #group by region, summarize plant column
 
 invasivecover_by_region <- group_by(wetlanddata, region, total_invasive_cover)
 region_averages <- summarize(invasivecover_by_region, 
-                              abundance = n())
+                              mean = n())
 
