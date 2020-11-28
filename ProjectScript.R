@@ -116,6 +116,24 @@ by_region <- group_by(wetlanddata, region)
 cover_avg_by_region <- summarize(by_region,
                              avg_invasive= mean(total_invasive_cover, na.rm = TRUE))
 
+# Data filtering - probably unnessecary
+
+AridWest <- filter(wetlanddata, region == "Arid West")
+Atlantic <- filter(wetlanddata, region == "Atlantic and Gulf Coastal Plain")
+EasternMountains <- filter(wetlanddata, region == "Eastern Mountains and Piedmont")
+GreatPlains <- filter(wetlanddata, region == "Great Plains")
+Midwest <- filter(wetlanddata, region == "Midwest")
+North <- filter(wetlanddata, region == "Northcentral and Northeast")
+West <- filter(wetlanddata, region == "Western Mountains, Valleys, and Coast")
+
+# Data visualization
+
+library(ggplot2)
+
+ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) + 
+  geom_boxplot()
+
+
 # Modelling the data
 
 library(glm2)
