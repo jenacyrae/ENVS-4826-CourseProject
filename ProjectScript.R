@@ -130,8 +130,17 @@ West <- filter(wetlanddata, region == "Western Mountains, Valleys, and Coast")
 
 library(ggplot2)
 
+
 ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) + 
-  geom_boxplot()
+  geom_boxplot() +
+  facet_wrap(~ region, scales = "free") +
+  ggtitle("Distribution of total invasive cover values by region\n") +
+  labs(x = "\nRegion", y = "Total invasive cover\n") +
+  theme(
+    panel.grid = element_blank(),
+    plot.margin = unit(c(0.5,0.5,0.5,0.5), units = , "cm"),
+    plot.title = element_text(hjust = 0.5)
+  )
 
 
 # Modelling the data
