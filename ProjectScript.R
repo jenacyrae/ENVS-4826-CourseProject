@@ -133,7 +133,7 @@ Midwest <- filter(wetlanddata, region == "Midwest")
 North <- filter(wetlanddata, region == "Northcentral and Northeast")
 West <- filter(wetlanddata, region == "Western Mountains, Valleys, and Coast")
 
-# Data visualization
+# Data visualization - boxplots
 
 library(ggplot2)
 
@@ -153,7 +153,15 @@ ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) +
 # Modelling the data
 
 library(glm2)
+human_use_regression <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=wetlanddata)
 
-regression <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=wetlanddata)
+par(mfrow=c(2,2))
+plot(human_use_regression)
 
-summary(regression)
+combined_regression <- glm(total_invasive_cover ~ human_use_severity + fire_severity + grazing_severity, family="poisson", data=wetlanddata)
+
+par(mfrow=c(2,2))
+plot(combined_regression)
+
+
+
