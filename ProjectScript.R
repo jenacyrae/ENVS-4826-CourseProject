@@ -168,5 +168,34 @@ ggplot(wetlanddata, aes(x = human_use_severity, y = total_invasive_cover)) +
   geom_smooth(method = "glm") +
   theme_classic()
 
+# Modelling the data by region
 
+AridWest_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=AridWest)
+Atlantic_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=Atlantic)
+EasternMountains_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=EasternMountains)
+GreatPlains_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=GreatPlains)
+Midwest_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=Midwest)
+North_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=North)
+West_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=West)
+
+par(mfrow=c(2,2))
+plot(AridWest_glm)
+
+par(mfrow=c(2,2))
+plot(Atlantic_glm)
+
+par(mfrow=c(2,2))
+plot(EasternMountains_glm)
+
+par(mfrow=c(2,2))
+plot(GreatPlains_glm)
+
+par(mfrow=c(2,2))
+plot(Midwest_glm)
+
+par(mfrow=c(2,2))
+plot(North_glm)
+
+par(mfrow=c(2,2))
+plot(West_glm)
 
