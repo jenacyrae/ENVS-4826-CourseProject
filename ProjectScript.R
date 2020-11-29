@@ -163,5 +163,10 @@ combined_regression <- glm(total_invasive_cover ~ human_use_severity + fire_seve
 par(mfrow=c(2,2))
 plot(combined_regression)
 
+ggplot(wetlanddata, aes(x = human_use_severity, y = total_invasive_cover)) +
+  geom_point() +
+  geom_smooth(method = "glm") +
+  theme_classic()
+
 
 
