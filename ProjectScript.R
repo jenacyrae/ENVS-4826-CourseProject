@@ -75,7 +75,12 @@ write.csv(wetlanddata, file = "data/wetlanddata.csv")
 wetlandmap <- st_read("data/wetlanddata.csv",
                       options = c("X_POSSIBLE_NAMES=longitude", 
                                   "Y_POSSIBLE_NAMES=latitude"),
-                      crs = 4326)
+                      crs = 4326, stringsAsFactors=T)
+
+wetlandmap <- wetlandmap[!is.na(wetlanddata$total_invasive_cover),]
+str(wetlandmap)
+wetlandmap$total_invasive_cover <- factor(wetlandmap$total_invasive_cover,levels=c("ABSENT","<5%","5-25%","26-75%",">75%"))
+levels(wetlandmap$total_invasive_cover)
 
 library("rnaturalearth")
 library("rnaturalearthdata")
@@ -90,13 +95,15 @@ ggplot(data = world) +
   theme(plot.title = element_text(hjust = 0.5, size = 18))
 
 # Mapping data points by invasive cover 
+library(RColorBrewer)
 
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data=wetlandmap, mapping = aes(color = total_invasive_cover)) +
   coord_sf(xlim = c(-132, -62), ylim = c(22, 53), expand = FALSE) +
-  ggtitle("United States 2011 Wetland Survey Sites") +
-  theme(plot.title = element_text(hjust = 0.5, size = 18))
+  ggtitle("Wetland Survey Sites") +
+  scale_colour_brewer("Total invasive cover", palette = "YlOrRd", labels = c("Absent", "< 5%", "5-25%","26-75%",">75%")) +
+  theme(plot.title = element_text(hjust = 0.5, size = 18)) 
 
 # Recoding total invasive cover
 
@@ -135,7 +142,7 @@ ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) +
   geom_boxplot() +
   facet_wrap(~ region, scales = "free") +
   ggtitle("Distribution of total invasive cover values by region\n") +
-  labs(x = "\nRegion", y = "Total invasive cover\n") +
+  labs(x = "\nRegion", y = "Total Invasive Cover\n") +
   theme(
     panel.grid = element_blank(),
     plot.margin = unit(c(0.5,0.5,0.5,0.5), units = , "cm"),
