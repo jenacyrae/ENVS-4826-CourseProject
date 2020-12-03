@@ -105,15 +105,6 @@ ggplot(data = world) +
   scale_colour_brewer("Total invasive cover", palette = "YlOrRd", labels = c("Absent", "< 5%", "5-25%","26-75%",">75%")) +
   theme(plot.title = element_text(hjust = 0.5, size = 18)) 
 
-# Recoding total invasive cover
-
-wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive_cover, 
-                         `ABSENT`="0",
-                         `<5%`="1",
-                         `5-25%`="2",
-                         `26-75%`="3",
-                         `>75%`="4"))
-
 
 # Grouping and averaging by region
 
@@ -149,6 +140,14 @@ ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) +
     plot.title = element_text(hjust = 0.5)
   )
 
+# Recoding total invasive cover
+
+wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive_cover, 
+                                                                  `ABSENT`="0",
+                                                                  `<5%`="1",
+                                                                  `5-25%`="2",
+                                                                  `26-75%`="3",
+                                                                  `>75%`="4"))
 
 # Modelling the data
 
