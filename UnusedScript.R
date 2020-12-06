@@ -61,3 +61,11 @@ ggplot(wetlanddata, aes(y = human_use_severity, x = total_invasive_cover, color 
 
 # Still no signifciant effects / suitable fit using a linear mixed model. 
 
+# Grouping and averaging by region
+
+wetlanddata$total_invasive_cover <- as.numeric(as.character(wetlanddata$total_invasive_cover))
+
+by_region <- group_by(wetlanddata, region)
+cover_avg_by_region <- summarize(by_region,
+                                 avg_invasive= mean(total_invasive_cover, na.rm = TRUE))
+
