@@ -1,9 +1,8 @@
-# ENVS 4826 Course Project | Jenacy Samways | A00418300
+# ENVS 4826 Course Project - Mapping Script | Jenacy Samways | A00418300
 
 # Loading the data 
 
 usaram_summary <- read.csv("data/nwca2011_usaram_summary.csv")
-usaram_attributes <- read.csv("data/nwca2011_usaram_attributes.csv")
 usaram_siteinfo <- read.csv("data/nwca2011_siteinfo copy.csv")
 
 # Data cleaning
@@ -31,39 +30,6 @@ wetlanddata <- rename(wetlanddata,"UID"="uid","agri_severity"="agr_severity_m3",
 
 wetlanddata <- wetlanddata[wetlanddata$visit_no != 2, ]
 
-# Testing linear model
-
-library(lme4)
-
-testmodel <- lm(wetlanddata$human_use_severity ~ wetlanddata$total_invasive_cover)
-
-summary(testmodel)
-
-par(mfrow=c(2,2))
-plot(testmodel)
-
-ggplot(wetlanddata, aes(x = total_invasive_cover, y = human_use_severity)) +
-  geom_point()+
-  geom_smooth(method = "lm")
-
-# Can conclude from the plots and summary that no significant relationship is present at this broad of a scale. 
-
-# Exploration of subregion 
-
-wetlanddata$region <- as.factor(wetlanddata$region)
-table(wetlanddata$region)
-
-# Exploration of subregion as a nested variable
-
-mixedmodel <- lmer(human_use_severity ~ total_invasive_cover + (1|region), 
-                       data = wetlanddata, REML = FALSE)
-summary(mixedmodel)
-
-ggplot(wetlanddata, aes(y = human_use_severity, x = total_invasive_cover, color = region)) +  
-  geom_point(size = 5, alpha = 0.5) + 
-  geom_line(aes(group = region)) +
-  theme_classic()
-
 # Mapping data points by region
 
 library(ggplot2)
@@ -82,6 +48,7 @@ str(wetlandmap)
 wetlandmap$total_invasive_cover <- factor(wetlandmap$total_invasive_cover,levels=c("ABSENT","<5%","5-25%","26-75%",">75%"))
 levels(wetlandmap$total_invasive_cover)
 
+
 library("rnaturalearth")
 library("rnaturalearthdata")
 library("rnaturalearth")
@@ -97,104 +64,10 @@ ggplot(data = world) +
 # Mapping data points by invasive cover 
 library(RColorBrewer)
 
-ggplot(data = world) +
+ggplot(data = world, na.rm = TRUE) +
   geom_sf() +
   geom_sf(data=wetlandmap, mapping = aes(color = total_invasive_cover)) +
   coord_sf(xlim = c(-132, -62), ylim = c(22, 53), expand = FALSE) +
   ggtitle("Wetland Survey Sites") +
-  scale_colour_brewer("Total invasive cover", palette = "YlOrRd", labels = c("Absent", "< 5%", "5-25%","26-75%",">75%")) +
+  scale_colour_brewer("Total invasive cover", palette = "YlOrRd", breaks = levels(wetlandmap$total_invasive_cover), labels = c("Absent", "< 5%", "5-25%","26-75%",">75%")) +
   theme(plot.title = element_text(hjust = 0.5, size = 18)) 
-
-
-# Grouping and averaging by region
-
-wetlanddata$total_invasive_cover <- as.numeric(as.character(wetlanddata$total_invasive_cover))
-
-by_region <- group_by(wetlanddata, region)
-cover_avg_by_region <- summarize(by_region,
-                             avg_invasive= mean(total_invasive_cover, na.rm = TRUE))
-
-# Data filtering - probably unnessecary
-
-AridWest <- filter(wetlanddata, region == "Arid West")
-Atlantic <- filter(wetlanddata, region == "Atlantic and Gulf Coastal Plain")
-EasternMountains <- filter(wetlanddata, region == "Eastern Mountains and Piedmont")
-GreatPlains <- filter(wetlanddata, region == "Great Plains")
-Midwest <- filter(wetlanddata, region == "Midwest")
-North <- filter(wetlanddata, region == "Northcentral and Northeast")
-West <- filter(wetlanddata, region == "Western Mountains, Valleys, and Coast")
-
-# Data visualization - boxplots
-
-library(ggplot2)
-
-
-ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) + 
-  geom_boxplot() +
-  facet_wrap(~ region, scales = "free") +
-  ggtitle("Distribution of total invasive cover values by region\n") +
-  labs(x = "\nRegion", y = "Total Invasive Cover\n") +
-  theme(
-    panel.grid = element_blank(),
-    plot.margin = unit(c(0.5,0.5,0.5,0.5), units = , "cm"),
-    plot.title = element_text(hjust = 0.5)
-  )
-
-# Recoding total invasive cover
-
-wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive_cover, 
-                                                                  `ABSENT`="0",
-                                                                  `<5%`="1",
-                                                                  `5-25%`="2",
-                                                                  `26-75%`="3",
-                                                                  `>75%`="4"))
-
-# Modelling the data
-
-library(glm2)
-human_use_regression <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=wetlanddata)
-
-par(mfrow=c(2,2))
-plot(human_use_regression)
-
-combined_regression <- glm(total_invasive_cover ~ human_use_severity + fire_severity + grazing_severity, family="poisson", data=wetlanddata)
-
-par(mfrow=c(2,2))
-plot(combined_regression)
-
-ggplot(wetlanddata, aes(x = human_use_severity, y = total_invasive_cover)) +
-  geom_point() +
-  geom_smooth(method = "glm") +
-  theme_classic()
-
-# Modelling the data by region
-
-AridWest_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=AridWest)
-Atlantic_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=Atlantic)
-EasternMountains_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=EasternMountains)
-GreatPlains_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=GreatPlains)
-Midwest_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=Midwest)
-North_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=North)
-West_glm <- glm(total_invasive_cover ~ human_use_severity, family="poisson", data=West)
-
-par(mfrow=c(2,2))
-plot(AridWest_glm)
-
-par(mfrow=c(2,2))
-plot(Atlantic_glm)
-
-par(mfrow=c(2,2))
-plot(EasternMountains_glm)
-
-par(mfrow=c(2,2))
-plot(GreatPlains_glm)
-
-par(mfrow=c(2,2))
-plot(Midwest_glm)
-
-par(mfrow=c(2,2))
-plot(North_glm)
-
-par(mfrow=c(2,2))
-plot(West_glm)
-
