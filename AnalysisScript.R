@@ -52,9 +52,23 @@ wetlanddata <- wetlanddata %>% mutate(total_invasive_cover=recode(total_invasive
 
 wetlanddata$total_invasive_cover <- as.numeric(as.character(wetlanddata$total_invasive_cover))
 
-# Data visualization - boxplots
+# Data visualization - histogram
 
 library(ggplot2)
+
+ggplot(wetlanddata, aes(x=total_invasive_cover)) +
+  geom_histogram(binwidth=.5, colour="black", fill="white") +
+  labs(x = "\nTotal Invasive Cover", y = "Count") +
+  ggtitle("Distribution of total invasive cover values\n") +
+  theme(
+    panel.grid = element_blank(),
+    plot.margin = unit(c(0.5,0.5,0.5,0.5), units = , "cm"),
+    plot.title = element_text(hjust = 0.5)
+  )
+  
+
+# Data visualization - boxplots
+
 
 ggplot(data = wetlanddata, aes(x=region, y=total_invasive_cover)) + 
   geom_boxplot() +
